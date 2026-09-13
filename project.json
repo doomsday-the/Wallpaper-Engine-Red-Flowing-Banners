@@ -1,7 +1,7 @@
 {
   "title": "Minimalist Futuristic Desktop",
   "description": "A premium, minimalist, futuristic interactive desktop wallpaper with subtle animations.",
-  "file": "src/index.html",
+  "file": "index.html",
   "preview": "assets/background.png",
   "type": "web",
   "general": {

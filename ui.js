@@ -59,13 +59,13 @@ class UIManager {
         container.id = 'desktop-icons';
 
         // This PC
-        const thisPc = this.createDesktopIcon('THIS PC', '../assets/this_pc.png', () => {
+        const thisPc = this.createDesktopIcon('THIS PC', 'assets/this_pc.png', () => {
             fetch(`${this.API_URL}/desktop/thispc`, { method: 'POST' });
         });
         container.appendChild(thisPc);
 
         // Recycle Bin
-        const recycleBin = this.createDesktopIcon('RECYCLE BIN', '../assets/recycle_bin.png', () => {
+        const recycleBin = this.createDesktopIcon('RECYCLE BIN', 'assets/recycle_bin.png', () => {
             fetch(`${this.API_URL}/desktop/recyclebin`, { method: 'POST' });
         });
 
