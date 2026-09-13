@@ -43,5 +43,6 @@ Wallpaper Engine runs in a restricted Chromium instance and cannot directly exec
 
 ## Version History
 
+- **v1.1.1 (Pre-Final)**: Rainmeter migration bug fixes (stripped native interaction logic to decouple UI clicks using an invisible Rainmeter hitboxes overlay for a flawless integration).
 - **v1.1**: Sleek UI overhaul (transparent flush-right links), and interactive drag-and-drop desktop icons.
 - **v1.0**: Core command center functionality, helper server, and application launching.

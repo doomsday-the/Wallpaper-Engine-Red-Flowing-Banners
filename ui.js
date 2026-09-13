@@ -69,38 +69,7 @@ class CCUIManager {
             fetch(`${this.API_URL}/desktop/recyclebin`, { method: 'POST' });
         });
 
-        // Drag and Drop Logic for Recycle Bin
-        recycleBin.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            recycleBin.classList.add('drag-over');
-        });
-        
-        recycleBin.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            recycleBin.classList.remove('drag-over');
-        });
-        
-        recycleBin.addEventListener('drop', (e) => {
-            e.preventDefault();
-            recycleBin.classList.remove('drag-over');
-            
-            const files = [];
-            if (e.dataTransfer.files) {
-                for (let i = 0; i < e.dataTransfer.files.length; i++) {
-                    const path = e.dataTransfer.files[i].path;
-                    if (path) files.push(path);
-                }
-            }
-            
-            if (files.length > 0) {
-                fetch(`${this.API_URL}/desktop/trash`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ files })
-                });
-            }
-        });
-
+        // Event listeners for drag-and-drop removed for Rainmeter handoff
         container.appendChild(recycleBin);
         this.uiLayer.appendChild(container);
     }
@@ -117,7 +86,7 @@ class CCUIManager {
         
         div.appendChild(img);
         div.appendChild(span);
-        div.onclick = onClick;
+        // div.onclick = onClick; // REMOVED for Rainmeter handoff
         
         return div;
     }
@@ -185,7 +154,7 @@ class CCUIManager {
             dot.className = 'status-dot';
             btn.appendChild(dot);
 
-            btn.onclick = () => btnConfig.action();
+            // btn.onclick = () => btnConfig.action(); // REMOVED for Rainmeter handoff
             grid.appendChild(btn);
         });
 
