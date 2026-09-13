@@ -7,7 +7,7 @@
     "warpPath": "C:\\Program Files\\Cloudflare\\Cloudflare WARP\\warp-cli.exe"
   },
   "apps": {
-    "valorant": "C:\\Riot Games\\VALORANT\\live\\VALORANT.exe",
+    "valorant": "\"C:\\Riot Games\\Riot Client\\RiotClientServices.exe\" --launch-product=valorant --launch-patchline=live",
     "curseforge": "C:\\Users\\Arush Mehta\\AppData\\Local\\Programs\\CurseForge Windows\\CurseForge.exe",
     "antigravity": "C:\\Users\\Arush Mehta\\AppData\\Local\\Programs\\Antigravity IDE\\Antigravity IDE.exe"
   },

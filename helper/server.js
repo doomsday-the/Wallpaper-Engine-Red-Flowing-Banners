@@ -89,19 +89,29 @@ app.post('/cloudflare/stop', (req, res) => {
     });
 });
 
+function launchTarget(target, res) {
+    if (!target) return res.json({ success: false, message: 'Not configured' });
+    
+    let cmd = '';
+    if (target.includes('--') || target.startsWith('"')) {
+        cmd = target; // E.g. Riot Client with arguments
+    } else if (target.startsWith('http') || target === 'wt.exe') {
+        cmd = `start "" "${target}"`; // URLs and shell tools
+    } else {
+        cmd = `explorer "${target}"`; // Standard EXEs and Folders
+    }
+
+    exec(cmd, (err) => {
+        if (err) return res.json({ success: false, message: 'Failed to launch' });
+        res.json({ success: true });
+    });
+}
+
 // ─── Apps ───
 
 app.post('/app/:id', (req, res) => {
     const config = getConfig();
-    const id = req.params.id;
-    const exePath = config.apps?.[id];
-
-    if (!exePath) return res.json({ success: false, message: 'App not configured' });
-
-    exec(`explorer "${exePath}"`, (err) => {
-        if (err) return res.json({ success: false, message: 'Failed to launch' });
-        res.json({ success: true });
-    });
+    launchTarget(config.apps?.[req.params.id], res);
 });
 
 // ─── Dev ───
@@ -112,16 +122,10 @@ app.post('/dev/:id', (req, res) => {
 
     if (id === 'github') {
         const url = config.dev?.githubRepoUrl || "https://github.com/Arush?tab=repositories";
-        exec(`start "" "${url}"`, (err) => res.json({ success: !err }));
-        return;
+        return launchTarget(url, res);
     }
 
-    const exePath = config.dev?.[id];
-    if (!exePath) return res.json({ success: false, message: 'Dev tool not configured' });
-
-    exec(`explorer "${exePath}"`, (err) => {
-        res.json({ success: !err });
-    });
+    launchTarget(config.dev?.[id], res);
 });
 
 // ─── Files ───
