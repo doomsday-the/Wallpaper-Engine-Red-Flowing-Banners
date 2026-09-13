@@ -1,46 +1,49 @@
-// Main Entry Point
+// ─── Default Settings ───
+// Overridden at runtime by Wallpaper Engine's property system.
+
+window.WallpaperSettings = {
+    breathingEnabled:   true,
+    breathingSpeed:     0.0125,
+    breathingAmplitude: 0.05,
+
+    lightingEnabled:    true,
+    lightingIntensity:  2.5,
+    lightingSpeed:      0.0125,
+
+    deformationEnabled: true,
+    deformationAmount:  0.03,
+
+    parallaxEnabled:    true,
+    parallaxAmount:     3.0,
+    parallaxSmoothing:  0.05,
+
+    // Internal mouse state
+    mouseX: 0.5,  mouseY: 0.5,
+    targetMouseX: 0.5,  targetMouseY: 0.5
+};
+
+// ─── Boot ───
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Renderer
     const renderer = new window.WallpaperRenderer();
-    console.log("Wallpaper Renderer Initialized.");
 
-    // Track mouse movement for parallax
+    // Mouse tracking for parallax
     document.addEventListener('mousemove', (e) => {
-        // Normalize mouse coordinates to 0.0 -> 1.0
         window.WallpaperSettings.targetMouseX = e.clientX / window.innerWidth;
         window.WallpaperSettings.targetMouseY = e.clientY / window.innerHeight;
     });
 
-    // Wallpaper Engine Property Listener
+    // Wallpaper Engine property bridge
     window.wallpaperPropertyListener = {
-        applyUserProperties: function(properties) {
+        applyUserProperties(properties) {
             const s = window.WallpaperSettings;
-
-            if (properties.breathingEnabled) {
-                s.breathingEnabled = properties.breathingEnabled.value;
-            }
-            if (properties.breathingSpeed) {
-                s.breathingSpeed = properties.breathingSpeed.value;
-            }
-            
-            if (properties.lightingEnabled) {
-                s.lightingEnabled = properties.lightingEnabled.value;
-            }
-            if (properties.lightingIntensity) {
-                s.lightingIntensity = properties.lightingIntensity.value;
-            }
-
-            if (properties.deformationEnabled) {
-                s.deformationEnabled = properties.deformationEnabled.value;
-            }
-
-            if (properties.parallaxEnabled) {
-                s.parallaxEnabled = properties.parallaxEnabled.value;
-            }
-            if (properties.parallaxAmount) {
-                s.parallaxAmount = properties.parallaxAmount.value;
-            }
+            if (properties.breathingEnabled)  s.breathingEnabled  = properties.breathingEnabled.value;
+            if (properties.breathingSpeed)    s.breathingSpeed    = properties.breathingSpeed.value;
+            if (properties.lightingEnabled)   s.lightingEnabled   = properties.lightingEnabled.value;
+            if (properties.lightingIntensity) s.lightingIntensity = properties.lightingIntensity.value;
+            if (properties.deformationEnabled) s.deformationEnabled = properties.deformationEnabled.value;
+            if (properties.parallaxEnabled)   s.parallaxEnabled   = properties.parallaxEnabled.value;
+            if (properties.parallaxAmount)    s.parallaxAmount    = properties.parallaxAmount.value;
         }
     };
 });

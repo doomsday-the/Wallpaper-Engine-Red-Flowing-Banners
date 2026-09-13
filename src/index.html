@@ -4,36 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minimalist Futuristic Desktop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- The Visual Layer: WebGL Canvas -->
     <canvas id="glcanvas"></canvas>
+    <div id="ui-layer"></div>
 
-    <!-- The Interface Layer: Will hold UI in future phases -->
-    <div id="ui-layer">
-        <div id="status-panel" class="ui-panel">
-            <div id="clock-container">
-                <div id="time-display">00:00</div>
-                <div id="date-display">System Date</div>
-            </div>
-            <div id="system-status">
-                <span class="status-dot"></span>
-                SYSTEM ONLINE
-            </div>
-        </div>
-    </div>
-
-    <!-- Configuration Defaults -->
-    <script src="config/settings.js"></script>
-
-    <!-- Animation System -->
-    <script src="animation/gl-context.js"></script>
-    <script src="animation/shaders.js"></script>
-    <script src="animation/renderer.js"></script>
-
-    <!-- Main Entry Point -->
-    <script src="ui/ui.js"></script>
+    <script src="gl-context.js"></script>
+    <script src="shaders.js"></script>
+    <script src="renderer.js"></script>
+    <script src="ui.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

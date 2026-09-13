@@ -1,30 +1,32 @@
-/* Base Resets */
+/* ─── Reset ─── */
 *, *::before, *::after {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 html, body {
-    margin: 0;
-    padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #050505; /* near-black charcoal */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Windows 11 elegance */
+    background-color: #050505;
+    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Visual Layer */
+/* ─── WebGL Canvas ─── */
 #glcanvas {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1; /* Below UI layer */
-    pointer-events: none; /* Let pointer events pass through to UI if needed, but we capture mousemove globally in JS */
+    z-index: 1;
+    pointer-events: none;
 }
 
-/* Interface Layer (Future Phase) */
+/* ─── UI Layer ─── */
 #ui-layer {
     position: absolute;
     top: 0;
@@ -32,106 +34,67 @@ html, body {
     width: 100%;
     height: 100%;
     z-index: 10;
-    pointer-events: none; /* Only allow pointer events on actual buttons inside */
-    
-    /* Setup variables for future UI */
-    --clr-charcoal: rgba(10, 10, 12, 0.7);
-    --clr-burgundy: rgba(100, 20, 30, 0.4);
-    --clr-text: rgba(220, 220, 230, 0.8);
-    --clr-border: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
 }
 
-/* UI Base Classes */
-.ui-panel {
+#ui-layer > * {
     pointer-events: auto;
-    background: var(--clr-charcoal);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--clr-border);
-    color: var(--clr-text);
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    padding: 24px;
-    
-    /* Subtle red accent border on hover */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.ui-panel:hover {
-    border-color: rgba(100, 20, 30, 0.6);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(100, 20, 30, 0.1);
+/* ─── Design Tokens ─── */
+:root {
+    --c-bg:       rgba(8, 8, 10, 0.55);
+    --c-bg-solid: rgba(8, 8, 10, 0.85);
+    --c-accent:   rgba(140, 40, 50, 1);
+    --c-accent-lo: rgba(140, 40, 50, 0.15);
+    --c-text:     rgba(235, 235, 240, 0.88);
+    --c-text-dim: rgba(235, 235, 240, 0.4);
+    --c-border:   rgba(255, 255, 255, 0.06);
+    --c-glow:     rgba(140, 40, 50, 0.25);
+    --radius:     12px;
+    --blur:       20px;
 }
 
-/* Phase 2: Status Panel */
-#status-panel {
+/* ─── Clock ─── */
+#clock-widget {
     position: absolute;
-    bottom: 40px;
-    right: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-end;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    backdrop-filter: none;
-    padding: 0;
-}
-
-#status-panel:hover {
-    border-color: transparent;
-    box-shadow: none;
-}
-
-#clock-container {
+    bottom: 48px;
+    right: 48px;
     text-align: right;
     user-select: none;
+    opacity: 0;
+    animation: fadeIn 1.2s ease 0.3s forwards;
 }
 
-#time-display {
-    font-size: 4rem;
-    font-weight: 300;
+#clock-time {
+    font-size: 5.5rem;
+    font-weight: 200;
     line-height: 1;
-    letter-spacing: -1px;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    letter-spacing: -3px;
+    color: var(--c-text);
 }
 
-#date-display {
-    font-size: 1rem;
+#clock-separator {
+    opacity: 1;
+    animation: blink 2s infinite ease-in-out;
+}
+
+#clock-date {
+    font-size: 0.7rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--clr-burgundy);
-    margin-top: 4px;
+    letter-spacing: 4px;
+    color: var(--c-text-dim);
+    margin-top: 8px;
 }
 
-#system-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.5);
-    background: var(--clr-charcoal);
-    padding: 6px 12px;
-    border-radius: 4px;
-    border: 1px solid var(--clr-border);
-    user-select: none;
+/* ─── Animations ─── */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-.status-dot {
-    width: 6px;
-    height: 6px;
-    background-color: #64141e; /* burgundy */
-    border-radius: 50%;
-    box-shadow: 0 0 8px rgba(100, 20, 30, 0.8);
-    animation: pulse 2s infinite ease-in-out;
-}
-
-@keyframes pulse {
-    0% { opacity: 0.4; box-shadow: 0 0 2px rgba(100, 20, 30, 0.4); }
-    50% { opacity: 1; box-shadow: 0 0 12px rgba(100, 20, 30, 0.8); }
-    100% { opacity: 0.4; box-shadow: 0 0 2px rgba(100, 20, 30, 0.4); }
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.2; }
 }
