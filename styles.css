@@ -228,9 +228,9 @@ html, body {
 #desktop-icons {
     position: absolute;
     top: 48px;
-    left: 48px;
+    left: 180px; /* Shifted past native desktop icons */
     display: flex;
-    gap: 32px;
+    gap: 24px;
     z-index: 100;
 }
 
@@ -254,14 +254,14 @@ html, body {
 }
 
 .desktop-icon img {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     object-fit: contain;
     filter: drop-shadow(0 0 4px rgba(255,255,255,0.2));
 }
 
 .desktop-icon span {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
     color: var(--c-text);
     text-transform: uppercase;
     letter-spacing: 2px;
