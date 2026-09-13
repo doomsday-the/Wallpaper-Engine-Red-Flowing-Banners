@@ -1,0 +1,22 @@
+{
+  "network": {
+    "universitySSID": "VIT5G",
+    "hotspotSSID": "Arush's OnePlus 12R"
+  },
+  "cloudflare": {
+    "warpPath": "C:\\Program Files\\Cloudflare\\Cloudflare WARP\\warp-cli.exe"
+  },
+  "apps": {
+    "valorant": "C:\\Riot Games\\VALORANT\\live\\VALORANT.exe",
+    "curseforge": "C:\\Users\\Arush Mehta\\AppData\\Local\\Programs\\CurseForge Windows\\CurseForge.exe",
+    "antigravity": "C:\\Users\\Arush Mehta\\AppData\\Local\\Programs\\Antigravity IDE\\Antigravity IDE.exe"
+  },
+  "dev": {
+    "terminal": "wt.exe",
+    "vscode": "C:\\Users\\Arush Mehta\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+    "githubRepoUrl": "https://github.com/ArushMehta?tab=repositories"
+  },
+  "projects": {
+    "default": "C:\\Users\\Arush Mehta\\Documents"
+  }
+}
