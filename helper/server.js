@@ -98,7 +98,7 @@ app.post('/app/:id', (req, res) => {
 
     if (!exePath) return res.json({ success: false, message: 'App not configured' });
 
-    exec(`start "" "${exePath}"`, (err) => {
+    exec(`explorer "${exePath}"`, (err) => {
         if (err) return res.json({ success: false, message: 'Failed to launch' });
         res.json({ success: true });
     });
@@ -119,7 +119,7 @@ app.post('/dev/:id', (req, res) => {
     const exePath = config.dev?.[id];
     if (!exePath) return res.json({ success: false, message: 'Dev tool not configured' });
 
-    exec(`start "" "${exePath}"`, (err) => {
+    exec(`explorer "${exePath}"`, (err) => {
         res.json({ success: !err });
     });
 });

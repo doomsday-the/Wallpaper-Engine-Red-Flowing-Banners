@@ -1,6 +1,6 @@
 // UI Manager — builds all overlay elements programmatically
 
-class UIManager {
+class CCUIManager {
     constructor() {
         this.uiLayer = document.getElementById('ui-layer');
         this.API_URL = 'http://127.0.0.1:3000';
@@ -285,5 +285,5 @@ class UIManager {
 
 // Boot
 document.addEventListener('DOMContentLoaded', () => {
-    window.uiManager = new UIManager();
+    window.uiManager = new CCUIManager();
 });
