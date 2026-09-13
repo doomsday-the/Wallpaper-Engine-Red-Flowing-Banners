@@ -48,7 +48,7 @@ window.Shaders = {
 
             // 2. Foreground Animations
             vec2 noiseUV = finalUV * 2.0;
-            float time = uTime * 0.0075; 
+            float time = uTime * 0.08; 
             
             vec2 disp;
             disp.x = sin(noiseUV.y * 3.1 + time) * cos(noiseUV.x * 2.2 - time);

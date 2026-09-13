@@ -3,15 +3,15 @@
 
 window.WallpaperSettings = {
     breathingEnabled:   true,
-    breathingSpeed:     0.0125,
-    breathingAmplitude: 0.05,
+    breathingSpeed:     0.12,
+    breathingAmplitude: 0.06,
 
     lightingEnabled:    true,
     lightingIntensity:  2.5,
-    lightingSpeed:      0.0125,
+    lightingSpeed:      0.12,
 
     deformationEnabled: true,
-    deformationAmount:  0.03,
+    deformationAmount:  0.025,
 
     parallaxEnabled:    true,
     parallaxAmount:     3.0,
