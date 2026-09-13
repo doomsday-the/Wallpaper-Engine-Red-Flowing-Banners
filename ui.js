@@ -4,16 +4,16 @@ class CCUIManager {
     constructor() {
         this.uiLayer = document.getElementById('ui-layer');
         this.API_URL = 'http://127.0.0.1:3000';
-        
+
         // Build layout
         this.buildCommandCenter();
         this.buildDesktopIcons();
         this.startClock();
-        
+
         // Initial state
         this.updateNetworkState();
         this.updateCloudflareState();
-        
+
         // Polling state
         setInterval(() => this.updateNetworkState(), 5000);
         setInterval(() => this.updateCloudflareState(), 5000);
@@ -77,17 +77,17 @@ class CCUIManager {
     createDesktopIcon(label, iconSrc, onClick) {
         const div = document.createElement('div');
         div.className = 'desktop-icon';
-        
+
         const img = document.createElement('img');
         img.src = iconSrc;
-        
+
         const span = document.createElement('span');
         span.textContent = label;
-        
+
         div.appendChild(img);
         div.appendChild(span);
         // div.onclick = onClick; // REMOVED for Rainmeter handoff
-        
+
         return div;
     }
 
@@ -99,7 +99,7 @@ class CCUIManager {
         widget.style.right = 'auto';
         widget.style.opacity = '1';
         widget.style.animation = 'none';
-        
+
         const time = document.createElement('div');
         time.id = 'clock-time';
 
@@ -137,7 +137,7 @@ class CCUIManager {
             const btn = document.createElement('button');
             btn.className = 'cc-btn' + (btnConfig.wide ? ' wide' : '') + (btnConfig.compact ? ' compact' : '');
             if (btnConfig.id) btn.id = btnConfig.id;
-            
+
             if (btnConfig.status !== undefined) {
                 const stat = document.createElement('span');
                 stat.className = 'status-text';
@@ -172,8 +172,8 @@ class CCUIManager {
         this.hoursEl.textContent = now.getHours().toString().padStart(2, '0');
         this.minutesEl.textContent = now.getMinutes().toString().padStart(2, '0');
 
-        const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         this.dateEl.textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
     }
 
@@ -186,13 +186,13 @@ class CCUIManager {
         try {
             const res = await fetch(`${this.API_URL}${endpoint}`, { method });
             const data = await res.json();
-            
+
             // Re-poll immediately to update real status
             setTimeout(() => {
                 this.updateNetworkState();
                 this.updateCloudflareState();
             }, 1000);
-            
+
         } catch (e) {
             if (btnId) this.setButtonState(btnId, 'FAILED', false);
         }
@@ -214,11 +214,11 @@ class CCUIManager {
         try {
             const res = await fetch(`${this.API_URL}/network/status`);
             const data = await res.json();
-            
+
             if (data.connected && data.ssid) {
                 const isUni = data.ssid.toLowerCase().includes('vit');
                 const isHot = data.ssid.toLowerCase().includes('arush');
-                
+
                 this.setButtonState('net-uni', isUni ? 'CONNECTED' : 'DISCONNECTED', isUni);
                 this.setButtonState('net-hot', isHot ? 'CONNECTED' : 'DISCONNECTED', isHot);
             } else {
@@ -243,10 +243,10 @@ class CCUIManager {
     setButtonState(id, statusText, isActive) {
         const btn = document.getElementById(id);
         if (!btn) return;
-        
+
         if (isActive) btn.classList.add('active');
         else btn.classList.remove('active');
-        
+
         const statEl = btn.querySelector('.status-text');
         if (statEl) statEl.textContent = statusText;
     }

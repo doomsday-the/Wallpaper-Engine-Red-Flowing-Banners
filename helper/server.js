@@ -24,39 +24,117 @@ function getConfig() {
 
 // ─── Network ───
 
-app.get('/network/status', (req, res) => {
-    exec('netsh wlan show interfaces', (err, stdout) => {
-        if (err) return res.json({ connected: false });
-        
-        const match = stdout.match(/SSID\s*:\s*(.*)/);
-        if (match && match[1]) {
-            res.json({ connected: true, ssid: match[1].trim() });
-        } else {
-            res.json({ connected: false });
-        }
+const PORTAL_URL = "http://phc.prontonetworks.com/cgi-bin/authlogin?URI=http://detectportal.brave-http-only.com/";
+
+function getCurrentWlanStatus() {
+    return new Promise((resolve) => {
+        exec('netsh wlan show interfaces', (err, stdout) => {
+            if (err) return resolve({ connected: false, ssid: null });
+            
+            const isConnected = /State\s*:\s*connected/i.test(stdout);
+            const ssidMatch = stdout.match(/^\s*SSID\s*:\s*(.+)$/m);
+            const ssid = isConnected && ssidMatch ? ssidMatch[1].trim() : null;
+            resolve({ connected: isConnected && !!ssid, ssid });
+        });
     });
+}
+
+function normalizeSSID(name) {
+    return (name || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+}
+
+function checkActionRequired() {
+    return new Promise((resolve) => {
+        exec('powershell -NoProfile -Command "(Get-NetConnectionProfile -InterfaceAlias \'Wi-Fi\' -ErrorAction SilentlyContinue).IPv4Connectivity"', (err, stdout) => {
+            const connectivity = (stdout || '').trim();
+            if (connectivity && connectivity !== 'Internet') {
+                return resolve(true);
+            }
+            exec('powershell -NoProfile -Command "try { $r = Invoke-WebRequest -Uri \'http://www.msftconnecttest.com/connecttest.txt\' -TimeoutSec 3 -UseBasicParsing; if ($r.StatusCode -eq 200 -and $r.Content.Trim() -eq \'Microsoft Connect Test\') { exit 0 } else { exit 1 } } catch { exit 1 }"', (probeErr) => {
+                resolve(!!probeErr);
+            });
+        });
+    });
+}
+
+async function switchNetwork(targetProfile, isUniversity, res) {
+    try {
+        const { connected, ssid: currentSSID } = await getCurrentWlanStatus();
+        const targetNorm = normalizeSSID(targetProfile);
+        const currentNorm = normalizeSSID(currentSSID);
+
+        const isTargetMatch = connected && currentNorm && (
+            currentNorm === targetNorm ||
+            (targetNorm.includes('mvit') && currentNorm.includes('mvit')) ||
+            (targetNorm.includes('oneplus') && currentNorm.includes('oneplus'))
+        );
+
+        if (isTargetMatch) {
+            if (isUniversity) {
+                const actionRequired = await checkActionRequired();
+                if (actionRequired) {
+                    exec(`start "" "${PORTAL_URL}"`);
+                    return res.json({
+                        success: true,
+                        alreadyConnected: true,
+                        actionRequired: true,
+                        message: 'Connected to M-VIT, login required. Opened browser.'
+                    });
+                }
+            }
+            return res.json({
+                success: true,
+                alreadyConnected: true,
+                actionRequired: false,
+                message: `Already connected to ${currentSSID}`
+            });
+        }
+
+        if (connected) {
+            await new Promise((resolve) => exec('netsh wlan disconnect', () => resolve()));
+            await new Promise((resolve) => setTimeout(resolve, 600));
+        }
+
+        exec(`netsh wlan connect name="${targetProfile}"`, (err) => {
+            if (err) {
+                return res.json({ success: false, message: `Failed to connect to ${targetProfile}` });
+            }
+
+            if (isUniversity) {
+                setTimeout(async () => {
+                    const actionRequired = await checkActionRequired();
+                    if (actionRequired) {
+                        exec(`start "" "${PORTAL_URL}"`);
+                    }
+                }, 3000);
+            }
+
+            res.json({
+                success: true,
+                alreadyConnected: false,
+                message: `Connecting to ${targetProfile}...`
+            });
+        });
+    } catch (e) {
+        res.json({ success: false, message: e.message });
+    }
+}
+
+app.get('/network/status', async (req, res) => {
+    const status = await getCurrentWlanStatus();
+    res.json(status);
 });
 
 app.post('/network/university', (req, res) => {
     const config = getConfig();
-    const ssid = config.network?.universitySSID || "VIT5G";
-    exec(`netsh wlan connect name="${ssid}"`, (err, stdout) => {
-        if (err) {
-            return res.json({ success: false, message: 'Failed to connect' });
-        }
-        res.json({ success: true, message: `Connecting to ${ssid}...` });
-    });
+    const ssid = config.network?.universitySSID || "M-VIT";
+    switchNetwork(ssid, true, res);
 });
 
 app.post('/network/hotspot', (req, res) => {
     const config = getConfig();
     const ssid = config.network?.hotspotSSID || "Arush's OnePlus 12R";
-    exec(`netsh wlan connect name="${ssid}"`, (err, stdout) => {
-        if (err) {
-            return res.json({ success: false, message: 'Failed to connect' });
-        }
-        res.json({ success: true, message: `Connecting to ${ssid}...` });
-    });
+    switchNetwork(ssid, false, res);
 });
 
 // ─── Cloudflare ───
@@ -66,7 +144,7 @@ app.get('/cloudflare/status', (req, res) => {
     const warpCli = config.cloudflare?.warpPath || 'warp-cli';
     exec(`"${warpCli}" status`, (err, stdout) => {
         if (err) return res.json({ running: false });
-        const running = stdout.toLowerCase().includes('connected');
+        const running = /Status update:\s*Connected\b/i.test(stdout);
         res.json({ running });
     });
 });
@@ -89,9 +167,21 @@ app.post('/cloudflare/stop', (req, res) => {
     });
 });
 
+app.post('/cloudflare/toggle', (req, res) => {
+    const config = getConfig();
+    const warpCli = config.cloudflare?.warpPath || 'warp-cli';
+    exec(`"${warpCli}" status`, (err, stdout) => {
+        const isConnected = !err && /Status update:\s*Connected\b/i.test(stdout);
+        const action = isConnected ? 'disconnect' : 'connect';
+        exec(`"${warpCli}" ${action}`, (toggleErr) => {
+            res.json({ success: !toggleErr, running: !isConnected });
+        });
+    });
+});
+
 function launchTarget(target, res) {
     if (!target) return res.json({ success: false, message: 'Not configured' });
-    
+
     let cmd = '';
     if (target.includes('--') || target.startsWith('"')) {
         cmd = target; // E.g. Riot Client with arguments
