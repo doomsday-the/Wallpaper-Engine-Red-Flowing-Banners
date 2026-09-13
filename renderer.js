@@ -43,14 +43,14 @@ class WallpaperRenderer {
         this.fgLoaded = false;
         
         const cb = '?v=' + Date.now();
-        this.textureBg = this.ctx.createTexture('../assets/bg_layer.png' + cb, (w, h) => {
+        this.textureBg = this.ctx.createTexture('assets/bg_layer.png' + cb, (w, h) => {
             this.imgWidth = w;
             this.imgHeight = h;
             this.bgLoaded = true;
             this.calculateAspect();
         });
         
-        this.textureFg = this.ctx.createTexture('../assets/fg_layer.png' + cb, (w, h) => {
+        this.textureFg = this.ctx.createTexture('assets/fg_layer.png' + cb, (w, h) => {
             this.fgLoaded = true;
         });
 
